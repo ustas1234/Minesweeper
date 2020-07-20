@@ -6,12 +6,27 @@ import kotlin.random.Random
 class MineFieldOperations {
     companion object {
         private lateinit var mineField: Array<CharArray>
-        var gameState = "Going"
+        private lateinit var mineFieldToDraw: Array<CharArray>
+        var gameState = "Starting"
         var minesUnmarked = 0
 
-        fun userMarks () {
-            print("Set/delete mines marks (x and y coordinates): ")
-            val (userYInput, userXInput) = readLine()!!.split(' ')
+        fun userMarks(uInputNumOfMines: Int) {
+            print("Set/unset mines marks or claim a cell as free: > ")
+            val (userYInput, userXInput, userAction) = readLine()!!.split(' ')
+
+            if (MineFieldOperations.gameState == "Starting" && userAction == "free") {
+                MineFieldOperations.create(9, 9, uInputNumOfMines,userXInput.toInt(),userYInput.toInt())
+                gameState = "Going"
+            }
+
+            when (userAction) {
+                "free" -> {
+
+                }
+                "mine" -> {
+
+                }
+            }
 
             when (mineField[userXInput.toInt() - 1][userYInput.toInt() - 1]) {
                 in '0'..'9' -> println("There is a number here!")
@@ -43,15 +58,15 @@ class MineFieldOperations {
             }
         }
 
-        fun create(rowNumber: Int, columnNumber: Int, minesNumberinput: Int) {
+        fun create(rowNumber: Int, columnNumber: Int, minesNumberinput: Int, firstCellX: Int,firstCellY: Int) {
             val minesNumber: Int
             var currentNumOfMines = 0
             var randomRow: Int
             var randomColumn: Int
 
 
-            minesNumber = if (minesNumberinput > rowNumber * columnNumber) {
-                rowNumber * columnNumber
+            minesNumber = if (minesNumberinput >= rowNumber * columnNumber) {
+                rowNumber * columnNumber - 1
             } else minesNumberinput
 
             minesUnmarked = minesNumber
@@ -65,7 +80,7 @@ class MineFieldOperations {
             while (currentNumOfMines != minesNumber) {
                 randomRow = Random.nextInt(0, rowNumber)
                 randomColumn = Random.nextInt(0, columnNumber)
-                if (mineField[randomRow][randomColumn] == '.') {
+                if (mineField[randomRow][randomColumn] == '.'&& (randomColumn != firstCellX && randomRow != firstCellY)) {
                     mineField[randomRow][randomColumn] = 'X'
                     currentNumOfMines++
                 }
@@ -75,16 +90,24 @@ class MineFieldOperations {
 
         }
 
+        fun createToDraw (rowNumber: Int, columnNumber: Int) {
+            for (i in 0..rowNumber) {
+                for (j in 0..columnNumber) {
+                    mineFieldToDraw = Array(i) { CharArray(j) { '.' } }
+                }
+            }
+        }
+
         fun drawField() {
             println(" │123456789│\n" +
                     "—│—————————│")
-            for (i in mineField.indices) {
+            for (i in mineFieldToDraw.indices) {
                 print("${i + 1}|")
-                for (j in mineField[i].indices) {
-                    when (mineField[i][j]) {
+                for (j in mineFieldToDraw[i].indices) {
+                    when (mineFieldToDraw[i][j]) {
                         'X' -> print('.')
                         'm','M' -> print('*')
-                        else -> print(mineField[i][j])
+                        else -> print(mineFieldToDraw[i][j])
                     }
                 }
                 print("|\n")
@@ -203,14 +226,17 @@ fun main() {
 
     print("How many mines do you want on the field? ")
     val uInputNumOfMines = readLine()!!.toInt()
-    MineFieldOperations.create(9,9, uInputNumOfMines)
+    MineFieldOperations.createToDraw(9,9)
     MineFieldOperations.drawField()
 
+
+
+
+  //  MineFieldOperations.create(9,9, uInputNumOfMines)
     while (MineFieldOperations.gameState != "End"){
-                MineFieldOperations.userMarks()
+                MineFieldOperations.userMarks(uInputNumOfMines)
 
 }
-
 
 }
 
