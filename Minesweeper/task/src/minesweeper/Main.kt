@@ -153,30 +153,25 @@ class MineFieldOperations {
         }
 
         private  fun showHints (X: Int, Y: Int){
-            if (mineField[Y][X] !in '0'..'9') floodHints(X,Y, mineField[Y][X]) else {
+//            if (mineField[Y][X] !in '0'..'9') floodHints(X,Y, mineField[Y][X]) else {
                             for (i in -1..1) {
-                for (j in -1..1){
-                    if ((X + j) in 0..8 && (Y + i) in 0..8) {
-                        when (mineField[Y + i][X + j]) {
-                            '.' -> mineFieldToDraw[Y + i][X + j] = '/'
-                            '*' -> mineFieldToDraw[Y + i][X + j] = '/'
-                            'X' -> mineFieldToDraw[Y + i][X + j] = '.'
-                            else -> {
-                                mineFieldToDraw[Y + i][X + j] = mineField[Y + i][X + j]
-                            }
+                                   for (j in -1..1){
+                                          if ((X + j) in 0..8 && (Y + i) in 0..8) {
+                                          when (mineField[Y + i][X + j]) {
+                                                '.' -> {
+                                                    floodHints(X + j, Y + i, '.')
+                                                    mineFieldToDraw[Y + i][X + j] = '/'
+                                                }
+                                                //'*' -> mineFieldToDraw[Y + i][X + j] = '/'
+                                                'X' -> if (mineFieldToDraw[Y + i][X + j] == '*') mineFieldToDraw[Y + i][X + j] = '*' else mineFieldToDraw[Y + i][X + j] = '.'
+                                                else -> {
+                                                    mineFieldToDraw[Y + i][X + j] = mineField[Y + i][X + j]
+                                            }
                         }
-
-/*                            if (!((i == 0) && (j == 0)) &&
-                                    ((mineFieldToDraw[Y + i][X + j] !in '0'..'9') &&
-                                            (mineField[Y + i][X + j] != 'X'))) {
-                                println("Found to go: X${X+ j} Y${Y + i}")
-                                //showHints(X + j, Y + i)
-                            }*/
-
                     }
                 }
             }
-            }
+
 
 
 
@@ -197,8 +192,8 @@ class MineFieldOperations {
                     if ((X + j) in 0..8 && (Y + i) in 0..8) {
                         when (mineField[Y + i][X + j]) {
                             '.' -> mineFieldToDraw[Y + i][X + j] = '/'
-                            '*' -> mineFieldToDraw[Y + i][X + j] = '/'
-                            'X' -> mineFieldToDraw[Y + i][X + j] = '.'
+                            //'*' -> mineFieldToDraw[Y + i][X + j] = '/'
+                            'X' -> if (mineFieldToDraw[Y + i][X + j] == '*') mineFieldToDraw[Y + i][X + j] = '*' else mineFieldToDraw[Y + i][X + j] = '.'
                             else -> {
                                 mineFieldToDraw[Y + i][X + j] = mineField[Y + i][X + j]
                             }
@@ -217,9 +212,19 @@ class MineFieldOperations {
 
 
             floodHints(X + 1, Y, prevValue, nextValue)
+            floodHints(X + 1, Y + 1, prevValue, nextValue)
+            floodHints(X + 1, Y - 1, prevValue, nextValue)
+
             floodHints(X - 1, Y, prevValue, nextValue)
+            floodHints(X - 1, Y + 1, prevValue, nextValue)
+            floodHints(X - 1, Y - 1, prevValue, nextValue)
+
+
             floodHints(X , Y + 1, prevValue, nextValue)
             floodHints(X , Y - 1, prevValue, nextValue)
+
+
+
 
         }
 
